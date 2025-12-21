@@ -1,5 +1,5 @@
-import { apiClient } from './client';
-import type { TodoItemType } from '$lib/types';
+import {apiClient} from './client';
+import type {TodoItemType} from '$lib/types';
 
 export interface TodoCreate {
     task: string;
@@ -9,6 +9,11 @@ export interface TodoCreate {
 export interface TodoUpdate {
     task?: string;
     done?: boolean;
+}
+
+export interface TodoReorder {
+    id: number;
+    order: number;
 }
 
 export const todosApi = {
@@ -25,7 +30,7 @@ export const todosApi = {
     },
 
     async update(id: number, todo: TodoUpdate): Promise<TodoItemType> {
-        return apiClient.put<TodoItemType>(`/todos/${id}`, todo);
+        return apiClient.patch<TodoItemType>(`/todos/${id}`, todo);
     },
 
     async delete(id: number): Promise<void> {
@@ -33,6 +38,10 @@ export const todosApi = {
     },
 
     async toggle(id: number, done: boolean): Promise<TodoItemType> {
-        return this.update(id, { done });
+        return this.update(id, {done});
+    },
+
+    async reorder(items: TodoReorder[]): Promise<void> {
+        return apiClient.patch<void>('/todos/reorder', items);
     },
 };

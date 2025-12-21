@@ -9,7 +9,7 @@
 </svelte:head>
 
 
-<header class="p-3">
+<header class="p-3 bg-amber-50">
     <a href="/">
         <img src={favicon} class="w-12 h-12 inline mx-5" alt="HL"/>
     </a>
@@ -18,12 +18,11 @@
 
 <div class="flex flex-row">
 
-    <nav class="flex-none bg-amber-500 w-1/6 h-screen *:width-full *:block *:p-5 *:hover:bg-amber-100">
-        <a href="/liste">Liste</a>
+    <nav class="flex-none bg-amber-50 w-1/6 h-screen *:width-full *:block *:p-5 *:hover:bg-amber-100">
         <a href="/liste">Liste</a>
     </nav>
 
-    <div class="flex-auto bg-blue-500">
+    <div class="flex-auto">
         {@render children()}
     </div>
 

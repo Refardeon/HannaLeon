@@ -41,15 +41,25 @@
         todos = todos.filter(t => t.id !== id);
     }
 
-    function reorderActive(items: typeof activeTodos) {
+    async function reorderActive(items: typeof activeTodos) {
         todos = [...items, ...doneTodos];
+
+        const reorders = todos.map((todo, index) => ({
+            id: todo.id,
+            order: index
+        }));
+        await todosApi.reorder(reorders);
     }
 
-    function reorderDone(items: typeof doneTodos) {
+    async function reorderDone(items: typeof doneTodos) {
         todos = [...activeTodos, ...items];
+
+        const reorders = todos.map((todo, index) => ({
+            id: todo.id,
+            order: index
+        }));
+        await todosApi.reorder(reorders);
     }
-
-
 </script>
 
 <div class="min-h-screen py-8 px-4">
