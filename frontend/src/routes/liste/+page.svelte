@@ -1,52 +1,55 @@
 <script lang="ts">
     import TodoList from '$lib/components/TodoList.svelte';
     import type {TodoItemType} from '$lib/types';
+    import {todosApi} from "$lib/api/todos";
+    import type {PageData} from './$types'
 
-    let todos = $state<TodoItemType[]>([]);
+    interface Props {
+        data: PageData;
+    }
+
+    let {data}: Props = $props();
+    let todos = $state<TodoItemType[]>(data.todos);
     let newItem = $state<string>("");
-    let nextId = $state<number>(0);
 
     let activeTodos = $derived(todos.filter(t => !t.done));
     let doneTodos = $derived(todos.filter(t => t.done));
 
-    function addItem(event: KeyboardEvent) {
+    async function addItem(event: KeyboardEvent) {
         if (event.key === "Enter" && newItem.trim()) {
-            todos.push({
-                id: nextId++,
-                task: newItem.trim(),
-                done: false
-            });
+            todos.push(await todosApi.create({task: newItem.trim()}));
             newItem = "";
         }
     }
 
-    function toggleTodo(id: number) {
+    async function toggleTodo(id: number) {
         const todo = todos.find(t => t.id === id);
         if (todo) {
+            await todosApi.toggle(id, !todo.done);
             todo.done = !todo.done;
         }
     }
 
-    function deleteTodo(id: number) {
+    async function editTodo(id: number, task: string) {
+        await todosApi.update(id, {task});
+        const todo = todos.find(t => t.id === id);
+        if (todo) todo.task = task;
+    }
+
+    async function deleteTodo(id: number) {
+        await todosApi.delete(id);
         todos = todos.filter(t => t.id !== id);
     }
 
-    function reorderActive(reorderedItems: TodoItemType[]) {
-        const doneItems = todos.filter(t => t.done);
-        todos = [...reorderedItems, ...doneItems];
+    function reorderActive(items: typeof activeTodos) {
+        todos = [...items, ...doneTodos];
     }
 
-    function reorderDone(reorderedItems: TodoItemType[]) {
-        const activeItems = todos.filter(t => !t.done);
-        todos = [...activeItems, ...reorderedItems];
+    function reorderDone(items: typeof doneTodos) {
+        todos = [...activeTodos, ...items];
     }
 
-    function editTodo(id: number, task: string) {
-        let todo = todos.find(t=>t.id===id);
-        if (todo){
-            todo.task = task;
-        }
-    }
+
 </script>
 
 <div class="min-h-screen py-8 px-4">
