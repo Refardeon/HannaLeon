@@ -94,9 +94,9 @@
             <p class="text-sm text-green-700 font-medium mb-1">Noch vor uns</p>
             <p class="text-3xl font-bold text-green-900">{activeTodos.length}</p>
         </div>
-        <div class="bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl p-4 border border-green-200">
-            <p class="text-sm text-green-700 font-medium mb-1">Schon gemacht</p>
-            <p class="text-3xl font-bold text-green-900">{doneTodos.length}</p>
+        <div class="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl p-4 border border-blue-200">
+            <p class="text-sm text-blue-700 font-medium mb-1">Schon gemacht</p>
+            <p class="text-3xl font-bold text-blue-900">{doneTodos.length}</p>
         </div>
     </div>
 
