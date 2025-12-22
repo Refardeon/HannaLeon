@@ -1,6 +1,8 @@
 <script lang="ts">
+    import '$lib/css/style.css'
     import favicon from '$lib/assets/HL2_favicon.svg';
     import logo from '$lib/assets/HL2.svg';
+
 
     let {children} = $props();
 </script>

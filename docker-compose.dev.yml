@@ -15,7 +15,7 @@ services:
       - PYTHONUNBUFFERED=1
       - DATABASE_URL=sqlite:///./data/todos.db
     restart: unless-stopped
-    
+
   frontend:
     container_name: hannaleon-frontend-dev
     build:
@@ -28,7 +28,8 @@ services:
       - ./frontend/static:/app/static
       - /app/node_modules  # Prevent overwriting
     environment:
-      - PUBLIC_API_URL=http://localhost:8000
+      - PUBLIC_API_URL=http://backend:8000
+      - PUBLIC_CLIENT_API_URL=http://localhost:8000
     depends_on:
       - backend
     restart: unless-stopped

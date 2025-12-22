@@ -1,4 +1,10 @@
-const API_BASE_URL = 'http://localhost:8000';
+const SERVER_API_URL = import.meta.env.PUBLIC_API_URL || 'http://backend:8000';
+
+const CLIENT_API_URL = import.meta.env.PUBLIC_CLIENT_API_URL || 'http://localhost:8000';
+
+const API_BASE_URL = typeof window === 'undefined'
+    ? SERVER_API_URL   // Server
+    : CLIENT_API_URL;  // Browser
 
 class Client {
     private readonly baseUrl: string;
