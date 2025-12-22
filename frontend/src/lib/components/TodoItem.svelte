@@ -2,20 +2,23 @@
     import {Check, Trash2, Undo2, GripVertical, Pencil} from 'lucide-svelte';
 
     interface Props {
+        id: number;
         task: string;
         done: boolean;
+        isDragging?: boolean;
         onToggle: () => void;
         onDelete: () => void;
         onEdit: (task: string) => void;
-        onDragStart?: (event: DragEvent) => void;
-        onDragEnd?: (event: DragEvent) => void;
+        onDragStart?: () => void;
+        onDragEnd?: () => void;
         onDragOver?: (event: DragEvent) => void;
     }
 
-    let {task, done, onToggle, onDelete, onEdit, onDragStart, onDragEnd, onDragOver}: Props = $props();
+    let { id, task, done, isDragging = false, onToggle, onDelete, onEdit, onDragStart, onDragEnd, onDragOver }: Props = $props();
     let showDeleteConfirm = $state<boolean>(false);
-    let dragging = $state<boolean>(false);
     let editing = $state<boolean>(false);
+    let editedTask = $state<string>(task);
+    let showButtons = $state<boolean>(false); // Für Mobile: Buttons immer sichtbar
 
     function handleDelete() {
         showDeleteConfirm = true;
@@ -30,93 +33,117 @@
         showDeleteConfirm = false;
     }
 
-    function handleDragStart(event: DragEvent) {
-        dragging = true;
-        onDragStart?.(event);
-    }
-
-    function handleDragEnd(event: DragEvent) {
-        dragging = false;
-        onDragEnd?.(event);
-    }
-
-    function edit() {
+    function startEdit() {
         editing = true;
+        editedTask = task;
     }
 
-    function executeEdit(event: KeyboardEvent) {
-        if (event.key === 'Enter') {
-            onEdit(task)
-            editing = false;
+    function saveEdit() {
+        if (editedTask.trim()) {
+            onEdit(editedTask.trim());
         }
-        else if (event.key === 'Escape') {
-            editing = false;
-        }
+        editing = false;
+    }
 
+    function cancelEdit(event: KeyboardEvent) {
+        if (event.key === 'Escape') {
+            editing = false;
+            editedTask = task;
+        } else if (event.key === 'Enter') {
+            saveEdit();
+        }
+    }
+
+    function toggleButtons() {
+        showButtons = !showButtons;
     }
 </script>
 
 <li
-        class="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow group {dragging ? 'opacity-50' : ''}"
-        draggable="true"
-        ondragstart={handleDragStart}
-        ondragend={handleDragEnd}
-        ondragover={onDragOver}
+    class="bg-white rounded-xl shadow-md p-4 transition-all border-2 border-transparent hover:border-amber-200 {isDragging ? 'opacity-50 scale-95' : ''} {showButtons ? 'border-amber-300' : ''}"
+    draggable="true"
+    ondragstart={onDragStart}
+    ondragend={onDragEnd}
+    ondragover={onDragOver}
 >
-    <div class="flex items-center justify-between">
-        {#if showDeleteConfirm}
-
-            <span class="text-red-600 font-medium px-4">Wirklich löschen?</span>
-            <div class="flex gap-2">
+    {#if showDeleteConfirm}
+        <!-- Bestätigungs-Ansicht -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <span class="text-red-600 font-medium">Wirklich löschen?</span>
+            <div class="flex gap-2 w-full sm:w-auto">
                 <button
-                        onclick={confirmDelete}
-                        class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                    onclick={confirmDelete}
+                    class="flex-1 sm:flex-none bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                 >
                     Ja, löschen
                 </button>
                 <button
-                        onclick={cancelDelete}
-                        class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                    onclick={cancelDelete}
+                    class="flex-1 sm:flex-none bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                 >
                     Abbrechen
                 </button>
             </div>
+        </div>
+    {:else if editing}
+        <!-- Edit-Ansicht -->
+        <div class="flex gap-2">
+            <input
+                type="text"
+                bind:value={editedTask}
+                onkeydown={cancelEdit}
+                onblur={saveEdit}
+                class="flex-1 bg-amber-50 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                autofocus
+            />
+        </div>
+    {:else}
+        <!-- Normale Ansicht -->
+        <div class="flex items-center gap-3">
+            <!-- Drag Handle - Nur Desktop -->
+            <button
+                class="hidden sm:block cursor-grab active:cursor-grabbing touch-none"
+                aria-label="Drag"
+            >
+                <GripVertical class="w-5 h-5 text-gray-400" />
+            </button>
 
-        {:else if editing}
-            <input type="text" class="bg-gray-100 px-4 py-2 rounded-md w-full focus:outline-none" bind:value={task}
-                   onkeydown={executeEdit}/>
-        {:else}
-            <!-- Normale Ansicht -->
-            <div class="flex items-center gap-3 flex-1">
-                <GripVertical class="w-5 h-5 text-gray-400 cursor-grab active:cursor-grabbing"/>
-                <span class="flex-1 {done ? 'text-gray-400 line-through' : 'text-gray-700'}">
+            <!-- Task Text -->
+            <button
+                onclick={toggleButtons}
+                class="flex-1 text-left {done ? 'text-gray-400 line-through' : 'text-gray-700'}"
+            >
                 {task}
-            </span>
-            </div>
-            <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            </button>
+
+            <!-- Buttons - Desktop: hover, Mobile: toggle -->
+            <div class="flex gap-2 {showButtons ? 'opacity-100' : 'opacity-0 sm:group-hover:opacity-100'} transition-opacity">
                 <button
-                        onclick={onToggle}
-                        class="{done ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-500 hover:bg-green-600'} text-white px-3 py-1 rounded-md text-sm font-medium transition-colors"
+                    onclick={onToggle}
+                    class="{done ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-500 hover:bg-green-600'} text-white p-2 rounded-lg transition-colors shadow-sm"
+                    aria-label={done ? 'Rückgängig' : 'Erledigt'}
                 >
                     {#if done}
-                        <Undo2 class="w-4 h-4"/>
+                        <Undo2 class="w-4 h-4" />
                     {:else}
-                        <Check class="w-4 h-4"/>
+                        <Check class="w-4 h-4" />
                     {/if}
                 </button>
                 <button
-                        onclick={edit}
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors"
+                    onclick={startEdit}
+                    class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-colors shadow-sm"
+                    aria-label="Bearbeiten"
                 >
-                    <Pencil class="w-4 h-4"/>
+                    <Pencil class="w-4 h-4" />
                 </button>
                 <button
-                        onclick={handleDelete}
-                        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors"
+                    onclick={handleDelete}
+                    class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg transition-colors shadow-sm"
+                    aria-label="Löschen"
                 >
-                    <Trash2 class="w-4 h-4"/>
+                    <Trash2 class="w-4 h-4" />
                 </button>
             </div>
-        {/if}
-    </div>
+        </div>
+    {/if}
 </li>
