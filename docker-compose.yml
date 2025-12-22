@@ -58,9 +58,9 @@ services:
       - "com.portainer.category=frontend"
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
-      - "traefik.http.routers.hannleon-frontend.rule=Host(`hanna-und-leon.de`)"
-      - "traefik.http.routers.hannleon-frontend.entrypoints=websecure"
-      - "traefik.http.routers.hannleon-frontend.tls.certresolver=le"
+      - "traefik.http.routers.hannaleon-frontend.rule=Host(`hanna-und-leon.de`)"
+      - "traefik.http.routers.hannaleon-frontend.entrypoints=websecure"
+      - "traefik.http.routers.hannaleon-frontend.tls.certresolver=le"
       - "traefik.http.services.hannaleon-frontend.loadbalancer.server.port=3000"
 
 networks:
