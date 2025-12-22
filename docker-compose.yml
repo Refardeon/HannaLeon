@@ -38,7 +38,7 @@ services:
     expose:
       - "3000"
     environment:
-      - PUBLIC_API_URL=http://backend:8000
+      - PUBLIC_SERVER_API_URL=http://backend:8000
       - PUBLIC_CLIENT_API_URL=https://api.hanna-und-leon.de
       - NODE_ENV=production
     networks:

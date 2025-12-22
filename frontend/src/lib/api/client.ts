@@ -1,17 +1,15 @@
-const SERVER_API_URL = import.meta.env.PUBLIC_API_URL || 'http://backend:8000';
-
-const CLIENT_API_URL = import.meta.env.PUBLIC_CLIENT_API_URL || 'http://localhost:8000';
-
-const API_BASE_URL = typeof window === 'undefined'
-    ? SERVER_API_URL   // Server
-    : CLIENT_API_URL;  // Browser
+import {env} from '$env/dynamic/public'
+import {browser} from '$app/environment';
 
 class Client {
-    private readonly baseUrl: string;
 
-    constructor(baseUrl: string) {
-        this.baseUrl = baseUrl;
+    private get baseUrl() {
+        if (browser) {
+            return env.PUBLIC_CLIENT_API_URL || 'http://localhost:8000';
+        }
+        return env.PUBLIC_SERVER_API_URL || 'http://backend:8000';
     }
+
 
     private async request<T>(
         endpoint: string,
@@ -69,4 +67,4 @@ class Client {
     }
 }
 
-export const apiClient = new Client(API_BASE_URL);
+export const apiClient = new Client();
