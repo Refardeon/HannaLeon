@@ -7,7 +7,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "8000:80"
     volumes:
       - backend-data:/app/data
     environment:
@@ -32,7 +32,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3000:80"
     environment:
       - PUBLIC_API_URL=http://backend:8000
       - NODE_ENV=production
