@@ -6,12 +6,14 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    ports:
-      - "8000:80"
+    expose:
+      - "8000"
     volumes:
       - backend-data:/app/data
     environment:
       - DATABASE_URL=sqlite:///./data/todos.db
+    networks:
+      - proxy
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/"]
@@ -22,10 +24,13 @@ services:
       - "com.portainer.description=FastAPI Backend"
       - "com.portainer.category=backend"
       - "traefik.enable=true"
-      - "traefik.http.routers.meine-app.rule=Host(`api.hanna-und-leon.de`)"
-      - "traefik.http.routers.meine-app.entrypoints=websecure"
-      - "traefik.http.routers.meine-app.tls.certresolver=le"
-    
+      - "traefik.http.routers.hannaleon-backend.rule=Host(`api.hanna-und-leon.de`)"
+      - "traefik.http.routers.hannaleon-backend.entrypoints=websecure"
+      - "traefik.http.routers.hannaleon-backend.tls.certresolver=le"
+      - "traefik.http.services.hannaleon-backend.loadbalancer.server.port=8000"
+
+
+
   frontend:
     container_name: hannaleon-frontend
     build:
@@ -37,6 +42,8 @@ services:
       - PUBLIC_API_URL=http://backend:8000
       - PUBLIC_CLIENT_API_URL=https://api.hanna-und-leon.de
       - NODE_ENV=production
+    networks:
+      - proxy
     depends_on:
       - backend
     restart: unless-stopped
@@ -49,9 +56,10 @@ services:
       - "com.portainer.description=SvelteKit Frontend"
       - "com.portainer.category=frontend"
       - "traefik.enable=true"
-      - "traefik.http.routers.meine-app.rule=Host(`hanna-und-leon.de`)"
-      - "traefik.http.routers.meine-app.entrypoints=websecure"
-      - "traefik.http.routers.meine-app.tls.certresolver=le"
+      - "traefik.http.routers.hannleon-frontend.rule=Host(`hanna-und-leon.de`)"
+      - "traefik.http.routers.hannleon-frontend.entrypoints=websecure"
+      - "traefik.http.routers.hannleon-frontend.tls.certresolver=le"
+      - "traefik.http.services.hannaleon-frontend.loadbalancer.server.port=3000"
 
 networks:
   proxy:
