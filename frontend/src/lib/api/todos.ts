@@ -18,7 +18,7 @@ export interface TodoReorder {
 
 export const todosApi = {
     async getAll(): Promise<TodoItemType[]> {
-        return apiClient.get<TodoItemType[]>('/todos');
+        return apiClient.get<TodoItemType[]>('/todos/');
     },
 
     async getById(id: number): Promise<TodoItemType> {
@@ -26,7 +26,7 @@ export const todosApi = {
     },
 
     async create(todo: TodoCreate): Promise<TodoItemType> {
-        return apiClient.post<TodoItemType>('/todos', todo);
+        return apiClient.post<TodoItemType>('/todos/', todo);
     },
 
     async update(id: number, todo: TodoUpdate): Promise<TodoItemType> {
