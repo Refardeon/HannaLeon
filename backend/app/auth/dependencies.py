@@ -1,15 +1,19 @@
 from typing import Optional
 
 from fastapi import Depends, HTTPException, status, Cookie, Header
-from fastapi.security import HTTPBearer
+from fastapi.security import HTTPBearer, APIKeyCookie
 from sqlmodel import Session, select
 from app.database import get_session
 from app.auth.models import User
 from app.auth.utils import decode_token
 
-security = HTTPBearer()
+security = HTTPBearer(auto_error=False)
+cookie_scheme = APIKeyCookie(name="access_token", auto_error=False)
+
 
 async def get_current_user(
+        _token_bearer: Optional[str] = Depends(security),
+        _token_cookie_ui: Optional[str] = Depends(cookie_scheme),
         access_token: Optional[str] = Cookie(None),
         authorization: Optional[str] = Header(None),
         session: Session = Depends(get_session)
