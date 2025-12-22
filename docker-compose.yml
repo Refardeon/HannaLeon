@@ -1,0 +1,49 @@
+version: '3.9'
+
+services:
+  backend:
+    container_name: hannaleon-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - backend-data:/app/data
+    environment:
+      - DATABASE_URL=sqlite:///./data/todos.db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "com.portainer.description=FastAPI Backend"
+      - "com.portainer.category=backend"
+    
+  frontend:
+    container_name: hannaleon-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - PUBLIC_API_URL=http://backend:8000
+      - NODE_ENV=production
+    depends_on:
+      - backend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "com.portainer.description=SvelteKit Frontend"
+      - "com.portainer.category=frontend"
+
+volumes:
+  backend-data:
+    driver: local

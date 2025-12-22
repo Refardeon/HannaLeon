@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  backend:
+    container_name: hannaleon-backend-dev
+    build:
+      context: ./backend
+      dockerfile: Dockerfiledev
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/app:/app/app  # Hot reload
+      - backend-data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DATABASE_URL=sqlite:///./data/todos.db
+    restart: unless-stopped
+    
+  frontend:
+    container_name: hannaleon-frontend-dev
+    build:
+      context: ./frontend
+      dockerfile: Dockerfiledev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend/src:/app/src  # Hot reload
+      - ./frontend/static:/app/static
+      - /app/node_modules  # Prevent overwriting
+    environment:
+      - PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  backend-data:
