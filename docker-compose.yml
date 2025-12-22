@@ -21,6 +21,10 @@ services:
     labels:
       - "com.portainer.description=FastAPI Backend"
       - "com.portainer.category=backend"
+      - "traefik.enable=true"
+      - "traefik.http.routers.meine-app.rule=Host(`api.hanna-und-leon.de`)"
+      - "traefik.http.routers.meine-app.entrypoints=websecure"
+      - "traefik.http.routers.meine-app.tls.certresolver=le"
     
   frontend:
     container_name: hannaleon-frontend
@@ -43,6 +47,14 @@ services:
     labels:
       - "com.portainer.description=SvelteKit Frontend"
       - "com.portainer.category=frontend"
+      - "traefik.enable=true"
+      - "traefik.http.routers.meine-app.rule=Host(`hanna-und-leon.de`)"
+      - "traefik.http.routers.meine-app.entrypoints=websecure"
+      - "traefik.http.routers.meine-app.tls.certresolver=le"
+
+networks:
+  proxy:
+    external: true
 
 volumes:
   backend-data:
