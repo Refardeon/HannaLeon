@@ -1,13 +1,17 @@
-
-import { todosApi } from '$lib/api/todos';
-import type { PageLoad } from './$types';
+import {redirect} from '@sveltejs/kit';
+import {authStore} from '$lib/stores/auth.svelte';
+import {todosApi} from '$lib/api/todos';
+import type {PageLoad} from './$types';
+import {authApi} from "$lib/api/auth";
 
 export const load: PageLoad = async () => {
     try {
+        const user = await authApi.getMe();
+        authStore.setUser(user);
+
         const todos = await todosApi.getAll();
-        return { todos };
+        return {todos};
     } catch (error) {
-        console.error('Failed to load todos:', error);
-        return { todos: [] };
+        throw redirect(302, '/login');
     }
 };

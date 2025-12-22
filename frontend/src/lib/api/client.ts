@@ -1,3 +1,5 @@
+import {authStore} from '$lib/stores/auth.svelte';
+
 import {env} from '$env/dynamic/public'
 import {browser} from '$app/environment';
 
@@ -19,6 +21,7 @@ class Client {
 
         const config: RequestInit = {
             ...options,
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
                 ...options?.headers,
@@ -28,11 +31,17 @@ class Client {
         try {
             const response = await fetch(url, config);
 
+            if (response.status === 401) {
+                if (browser) {
+                    window.location.href = '/login';
+                }
+                throw new Error(`Unauthorized access to ${response.url}`);
+            }
+
             if (!response.ok) {
                 throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
             }
 
-            // Handle 204 No Content
             if (response.status === 204) {
                 return null as T;
             }
