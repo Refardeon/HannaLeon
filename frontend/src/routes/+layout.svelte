@@ -29,7 +29,7 @@
     <!-- Header -->
     <header class="bg-white/80 backdrop-blur-md border-b border-amber-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <a href="/static" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
                 <img src={logo} class="w-10 h-10 md:w-12 md:h-12" alt="HL"/>
                 <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
                     Hanna & Leon
