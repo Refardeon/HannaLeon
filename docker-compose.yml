@@ -10,6 +10,7 @@ services:
       - backend-data:/app/data
     environment:
       - DATABASE_URL=sqlite:///./data/todos.db
+      - SECRET_KEY= "qYZ~/LAb~=lAB/Xuaj7"C"CI0VBqacCl"
     networks:
       - proxy
     restart: unless-stopped
