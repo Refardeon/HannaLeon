@@ -57,7 +57,7 @@ export const authApi = {
     },
 
     async setLogo(user_id:number, logo: UpdateUserLogo): Promise<UserResponse> {
-        return await apiClient.patch<UserResponse>(`/auth/${user_id}/`, logo);
+        return await apiClient.patch<UserResponse>(`/auth/${user_id}`, logo);
     },
 
     async auth_or_login() {
