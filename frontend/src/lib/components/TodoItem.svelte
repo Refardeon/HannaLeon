@@ -94,7 +94,6 @@
                 onkeydown={cancelEdit}
                 onblur={saveEdit}
                 class="flex-1 bg-amber-50 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                autofocus
             />
         </div>
     {:else}

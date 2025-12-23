@@ -1,12 +1,19 @@
 <script lang="ts">
     import '$lib/css/style.css'
-    import favicon from '$lib/assets/HL2_favicon.svg';
-    import logo from '$lib/assets/HL2.svg';
     import {authStore} from '$lib/stores/auth.svelte.js';
     import {authApi} from '$lib/api/auth';
     import {goto} from '$app/navigation';
     import {LogOut, User, Menu, X} from 'lucide-svelte';
+    import favicon1 from "$lib/assets/HL1_favicon.svg"
+    import favicon2 from "$lib/assets/HL2_favicon.svg"
+    import favicon3 from "$lib/assets/HL3_favicon.svg"
+    import logo1 from "$lib/assets/HL1.svg"
+    import logo2 from "$lib/assets/HL2.svg"
+    import logo3 from "$lib/assets/HL3.svg"
 
+
+    let logos = [logo1, logo2, logo3];
+    let favicons = [favicon1, favicon2, favicon3];
     let {children} = $props();
     let mobileMenuOpen = $state(false);
 
@@ -16,13 +23,29 @@
         goto('/login');
     }
 
+    function get_favicon() {
+        if (authStore.user && authStore.user.logo) {
+            return favicons[authStore.user.logo-1];
+        }
+        return null;
+    }
+
+    function get_logo() {
+        if (authStore.user && authStore.user.logo) {
+            return logos[authStore.user.logo-1];
+        }
+        return null;
+    }
+
     function closeMobileMenu() {
         mobileMenuOpen = false;
     }
 </script>
 
 <svelte:head>
-    <link rel="icon" href={favicon} style="background-color: white"/>
+    {#if get_favicon()}
+        <link rel="icon" href={get_favicon()} style="background-color: white"/>
+    {/if}
 </svelte:head>
 
 <div class="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
@@ -30,7 +53,9 @@
     <header class="bg-white/80 backdrop-blur-md border-b border-amber-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                <img src={logo} class="w-10 h-10 md:w-12 md:h-12" alt="HL"/>
+                {#if get_logo()}
+                    <img src={get_logo()} class="w-10 h-10 md:w-12 md:h-12" alt="HL"/>
+                {/if}
                 <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
                     Hanna & Leon
                 </h1>

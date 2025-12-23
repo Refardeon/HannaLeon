@@ -1,4 +1,7 @@
 import {apiClient} from './client';
+import {authStore} from "$lib/stores/auth.svelte";
+import {redirect} from '@sveltejs/kit';
+
 
 export interface LoginRequest {
     username: string;
@@ -17,6 +20,11 @@ export interface TokenResponse {
 export interface UserResponse {
     id: number;
     username: string;
+    logo: number;
+}
+
+export interface UpdateUserLogo {
+    logo: number;
 }
 
 export const authApi = {
@@ -46,5 +54,18 @@ export const authApi = {
     },
     async logout(): Promise<void> {
         await apiClient.post<void>('/auth/logout', {});
+    },
+
+    async setLogo(user_id:number, logo: UpdateUserLogo): Promise<UserResponse> {
+        return await apiClient.patch<UserResponse>(`/auth/${user_id}/`, logo);
+    },
+
+    async auth_or_login() {
+        try {
+            const user = await authApi.getMe();
+            authStore.setUser(user);
+        } catch (error) {
+            throw redirect(302, '/login');
+        }
     },
 };

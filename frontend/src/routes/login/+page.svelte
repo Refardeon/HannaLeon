@@ -16,7 +16,7 @@
         try {
             const response = await authApi.login({username, password});
             authStore.setUser(response.user)
-            goto('/liste');
+            goto('/');
         } catch (err) {
             console.error('Login failed:', err);
             error = 'Login fehlgeschlagen. Bitte überprüfe deine Daten.';

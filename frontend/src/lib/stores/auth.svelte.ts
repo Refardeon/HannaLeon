@@ -1,5 +1,6 @@
 interface User {
     username: string;
+    logo: number;
 }
 
 class AuthStore {

@@ -1,9 +1,8 @@
-import { redirect } from '@sveltejs/kit';
-import { authStore } from '$lib/stores/auth.svelte';
+import type {PageLoad} from "../../.svelte-kit/types/src/routes/liste/$types";
+import {authApi} from "$lib/api/auth";
 
-export const load = () => {
+export const ssr = false;
 
-    if (!authStore.isAuthenticated) {
-    throw redirect(302, '/login');
-}
+export const load: PageLoad = async () => {
+    await authApi.auth_or_login()
 };

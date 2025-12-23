@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
 
 from app.auth.dependencies import get_current_user
-from app.auth.models import User, UserRead, Token
+from app.auth.models import User, UserRead, Token, UserUpdate
 from app.auth.utils import (
     verify_password,
     create_access_token,
@@ -73,6 +73,23 @@ def login(
     )
 
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.patch("/{user_id}", response_model=UserRead)
+def update_todo(user_id: int,
+                user: UserUpdate,
+                session: Session = Depends(get_session),
+                _current_user: User = Depends(get_current_user)):
+    db_user = session.get(User, user_id)
+    if not db_user:
+        return None
+
+    user_data = user.model_dump(exclude_unset=True)
+    db_user.sqlmodel_update(obj=user_data)
+
+    session.add(db_user)
+    session.commit()
+    session.refresh(db_user)
+    return db_user
 
 @router.post("/logout")
 def logout(response: Response):
