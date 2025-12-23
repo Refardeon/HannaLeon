@@ -9,7 +9,7 @@ services:
     volumes:
       - backend-data:/app/data
     environment:
-      - DATABASE_URL=sqlite:///./data/todos.db
+      - DATABASE_URL=sqlite:///./data/data.db
       - SECRET_KEY= "qYZ~/LAb~=lAB/Xuaj7"C"CI0VBqacCl"
     networks:
       - proxy

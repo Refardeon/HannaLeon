@@ -13,7 +13,7 @@ services:
       - backend-data:/app/data
     environment:
       - PYTHONUNBUFFERED=1
-      - DATABASE_URL=sqlite:///./data/todos.db
+      - DATABASE_URL=sqlite:///./data/data.db
     restart: unless-stopped
 
   frontend:
