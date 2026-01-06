@@ -1,6 +1,11 @@
 # Product Backlog
 
-- Link Backend and Frontend
-- Dockerize both
-- Get Server to spin up a Container Server (22.12.)
-  - Spin up container Server
+- Länger eingeloggt bleiben
+- Gemeinsamer Kalender
+- Nächste Termine
+- Kalender und Liste verknüpfen (Dinge einplanen und archivieren)
+- Dateien speichern
+- Webapp
+
+
+
